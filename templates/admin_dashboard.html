@@ -1,180 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
 
-        body {
-            font-family: 'Roboto', sans-serif;
-           background: url("{{ url_for('static', filename='bg1.jpg') }}") 
-                        no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            
-        }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        .container {
-            background-color: rgba(255,255,255,0.95);
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 1100px;
-            margin: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
+body {
+    font-family: 'Roboto', sans-serif;
+    background: url("{{ url_for('static', filename='bg1.jpg') }}")
+                no-repeat center center fixed;
+    background-size: cover;
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #00796b;
-        }
+    /* 🔥 CRITICAL FIX */
+    height: 100vh;
+    overflow: hidden;
+}
 
-        .logout {
-            float: right;
-            padding: 8px 15px;
-            background-color: #d32f2f;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
+/* Dashboard shell */
+.container {
+    background-color: rgba(255,255,255,0.95);
+    width: 95%;
+    max-width: 1200px;
+    height: 90vh;                 /* 🔥 fixed height */
+    margin: 5vh auto;
+    border-radius: 15px;
+    padding: 20px;
 
-        .logout:hover {
-            background-color: #b71c1c;
-        }
+    display: flex;               /* 🔥 flex layout */
+    flex-direction: column;
 
-        .filters {
-            margin-bottom: 20px;
-            text-align: center;
-        }
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
 
-        .filters a {
-            display: inline-block;
-            margin: 5px 10px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            background-color: #00796b;
-            color: white;
-            text-decoration: none;
-            transition: 0.3s;
-        }
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .filters a:hover {
-            background-color: #004d40;
-        }
+h2 {
+    color: #00796b;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 14px;
-        }
+.logout {
+    padding: 8px 15px;
+    background-color: #d32f2f;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+}
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
+.logout:hover {
+    background-color: #b71c1c;
+}
 
-        th {
-            background-color: #00796b;
-            color: white;
-        }
+.filters {
+    margin: 15px 0;
+    text-align: center;
+}
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
+.filters a {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    background-color: #00796b;
+    color: white;
+    text-decoration: none;
+}
 
-        select {
-            padding: 6px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
+.filters a:hover {
+    background-color: #004d40;
+}
 
-        button.update-btn {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: #388e3c;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* 🔥 ONLY THIS SCROLLS */
+.table-wrapper {
+    flex: 1;                     /* takes remaining height */
+    overflow-y: auto;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
 
-        button.update-btn:hover {
-            background-color: #1b5e20;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
 
-        /* Status colors */
-        .status-Pending { color: #f57c00; font-weight: bold; }
-        .status-In-Progress { color: #1976d2; font-weight: bold; }
-        .status-Resolved { color: #388e3c; font-weight: bold; }
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+}
 
-        @media(max-width: 768px){
-            table, th, td {
-                font-size: 12px;
-            }
-        }
-    </style>
+th {
+    background-color: #00796b;
+    color: white;
+    position: sticky;            /* 🔥 sticky header */
+    top: 0;
+    z-index: 2;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+select {
+    padding: 6px;
+    border-radius: 8px;
+}
+
+button.update-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #388e3c;
+    color: white;
+    cursor: pointer;
+}
+
+button.update-btn:hover {
+    background-color: #1b5e20;
+}
+
+/* Status colors */
+.status-Pending { color: #f57c00; font-weight: bold; }
+.status-In-Progress { color: #1976d2; font-weight: bold; }
+.status-Resolved { color: #388e3c; font-weight: bold; }
+
+@media(max-width: 768px) {
+    table { font-size: 12px; }
+}
+</style>
 </head>
-<body>
-<div class="container">
-    <a href="/logout" class="logout">Logout</a>
-    <h2>Admin Dashboard</h2>
 
-    <div class="filters">
-    <a href="/admin_dashboard?filter=pending">Pending</a>
-    <a href="/admin_dashboard?filter=inprogress">In Progress</a>
-    <a href="/admin_dashboard?filter=resolved">Resolved</a>
-    <a href="/admin_dashboard">All</a>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h2>Admin Dashboard</h2>
+        <a href="/logout" class="logout">Logout</a>
     </div>
 
+    <div class="filters">
+        <a href="/admin_dashboard?filter=pending">Pending</a>
+        <a href="/admin_dashboard?filter=inprogress">In Progress</a>
+        <a href="/admin_dashboard?filter=resolved">Resolved</a>
+        <a href="/admin_dashboard">All</a>
+    </div>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Student</th>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Update</th>
-        </tr>
+    <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Update</th>
+            </tr>
 
-        {% for comp in complaints %}
-        <tr>
-            <td>{{ comp.id }}</td>
-            <td>{{ comp.student }}</td>
-            <td>{{ comp.title }}</td>
-            <td>{{ comp.category }}</td>
-            <td>{{ comp.description }}</td>
+            {% for comp in complaints %}
+            <tr>
+                <td>{{ comp.id }}</td>
+                <td>{{ comp.student }}</td>
+                <td>{{ comp.title }}</td>
+                <td>{{ comp.category }}</td>
+                <td>{{ comp.description }}</td>
+                <td class="status-{{ comp.status|replace(' ', '-') }}">
+                    {{ comp.status }}
+                </td>
+                <td>
+                    <form method="POST" action="/update_status" style="display:flex; gap:8px;">
+                        <input type="hidden" name="id" value="{{ comp.id }}">
+                        <select name="status">
+                            <option value="Pending" {% if comp.status=='Pending' %}selected{% endif %}>Pending</option>
+                            <option value="In Progress" {% if comp.status=='In Progress' %}selected{% endif %}>In Progress</option>
+                            <option value="Resolved" {% if comp.status=='Resolved' %}selected{% endif %}>Resolved</option>
+                        </select>
+                        <button class="update-btn">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
-            <td class="status-{{ comp.status|replace(' ', '-') }}">
-                {{ comp.status }}
-            </td>
-
-            <td>
-                <form method="POST" action="/update_status" style="display:flex; gap:8px;">
-                    <input type="hidden" name="id" value="{{ comp.id }}">
-                    <select name="status">
-                        <option value="Pending" {% if comp.status=='Pending' %}selected{% endif %}>Pending</option>
-                        <option value="In Progress" {% if comp.status=='In Progress' %}selected{% endif %}>In Progress</option>
-                        <option value="Resolved" {% if comp.status=='Resolved' %}selected{% endif %}>Resolved</option>
-                    </select>
-                    <button type="submit" class="update-btn">Update</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
 </div>
+
 </body>
 </html>
